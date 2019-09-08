@@ -872,7 +872,6 @@
             },
 
             setRenderer: function (a, noWebGL) {
-
                 // noWebGL = true;
                 var renderer = a.renderer || this.getRenderer(a.width, a.height, { resolution: a.resolution, transparent: false }, noWebGL),
                     ev = {}, dom = renderer.view, mapPositionToPoint = this.mapPositionToPoint, resolution = a.resolution || 1;
@@ -885,102 +884,65 @@
 
                 // a.width *= a.resolution;
                 // a.height *= a.resolution;
-
-
                 ev.touchDown = function (e) {
                     e.preventDefault();
-
                     mapPositionToPoint(Q.event.start, e.changedTouches[0].pageX, e.changedTouches[0].pageY, dom, resolution);
-
                     miao.event.now.x = Q.event.start.x;
                     miao.event.now.y = Q.event.start.y;
-
                     message.trigger(a, 'down', e);
                 }
-
                 ev.touchMove = function (e) {
                     e.preventDefault();
-
                     var _po = { x: 0, y: 0 };
-
                     mapPositionToPoint(_po, e.changedTouches[0].pageX, e.changedTouches[0].pageY, dom, resolution);
-
                     miao.event.delay.x = _po.x - Q.event.now.x;
                     miao.event.delay.y = _po.y - Q.event.now.y;
                     miao.event.now.x = _po.x;
                     miao.event.now.y = _po.y;
-
                     message.trigger(a, 'move', e);
-
                 }
-
                 ev.touchUp = function (e) {
                     e.preventDefault();
-
                     mapPositionToPoint(Q.event.now, e.changedTouches[0].pageX, e.changedTouches[0].pageY, dom, resolution);
-
                     miao.event.end.x = Q.event.now.x;
                     miao.event.end.y = Q.event.now.y;
-
                     message.trigger(a, 'up', e);
                 }
-
                 ev.mouseDown = function (e) {
-
                     e.preventDefault();
-
                     mapPositionToPoint(Q.event.start, e.clientX, e.clientY, dom, resolution);
-
                     miao.event.now.x = Q.event.start.x;
                     miao.event.now.y = Q.event.start.y;
-
                     message.trigger(a, 'down', e);
-
                 }
-
                 ev.mouseMove = function (e) {
                     e.preventDefault();
-
                     var _po = { x: 0, y: 0 };
-
                     mapPositionToPoint(_po, e.clientX, e.clientY, dom, resolution);
-
                     miao.event.delay.x = _po.x - Q.event.now.x;
                     miao.event.delay.y = _po.y - Q.event.now.y;
                     miao.event.now.x = _po.x;
                     miao.event.now.y = _po.y;
                     message.trigger(a, 'move', e);
                 }
-
                 ev.mouseUp = function (e) {
-
                     e.preventDefault();
-
                     mapPositionToPoint(Q.event.now, e.clientX, e.clientY, dom, resolution);
-
                     miao.event.end.x = Q.event.now.x;
                     miao.event.end.y = Q.event.now.y;
                     message.trigger(a, 'up', e);
-
                 }
-
-
                 if (!navigator.userAgent.match(/Android|Mobile|iPhone|iPad/)) {
-
                     renderer.view.addEventListener('mousedown', ev.mouseDown, false);
                     renderer.view.addEventListener('mousemove', ev.mouseMove, false);
                     renderer.view.addEventListener('mouseup', ev.mouseUp, false);
 
                 } else {
-
                     renderer.view.addEventListener('touchstart', ev.touchDown, false);
                     renderer.view.addEventListener('touchmove', ev.touchMove, false);
                     renderer.view.addEventListener('touchend', ev.touchUp, false);
-
                 };
-
                 a.renderer = renderer;
-
                 a.element.appendChild(renderer.view);
 
             }
@@ -1266,28 +1228,16 @@
                 }
 
             },
-
             once: function (a, b, c) {
-                // console.log(a,b)
-
-                // console.trace();
-
                 if (!fn.isS(b) || !fn.isF(c)) return;
                 var ls = a._listener = a._listener || {};
                 message.on(a, b, c);
-
                 ls[b].ty = ls[b].ty | 1;
-
-
             },
-
             unall: function (a, b) {
-
                 if (a._listener && a._listener[b]) {
-
                     a._listener[b] = null;
                     delete a._listener[b];
-
                 }
             },
 
@@ -1301,7 +1251,6 @@
                 if (!a || !a._listener || !a._listener[b]) return;
                 var ls = a._listener[b], ty = a._listener[b].ty, ret;
 
-
                 if ((ty & 2) && (ty & 8)) {
                     if (ty & 4) {
                         if (ls.ev)
@@ -1312,19 +1261,14 @@
                                         break;
                                     }
                                 }
-
                             } else { if (ls.ev.call(a, c)) ret = true };
-
                         if (!ret && ls.ij.call(a, c)) ret = true;
-
                     } else {
-
                         if (ls.ij.call(a, c)) ret = true;
                         if (!ret && ls.ev)
                             if (ty & 16) {
                                 console.log(ls);
                                 for (var i = 0; i < ls.ev.length; i++) {
-
                                     if (ls.ev[i].call(a, c)) {
                                         ret = true;
                                         break;
@@ -1353,48 +1297,32 @@
 
             //如果D为true，注入的函数在前执行
             inj: function (a, b, c, d) {
-
                 if (!fn.isS(b) || !fn.isF(c)) return;
                 var ls = a._listener = a._listener || {};
-
                 if (!ls[b]) {
-
                     ls[b] = new E({ ij: c });
-
                 } else {
-
                     ls[b].ij = c;
                 }
-
                 ls[b].ty = d ? ls[b].ty | 14 : ls[b].ty | 10;
-
                 //  &1      是否只执行一次 
                 //  &2      是否有注入 
                 //  &4      注入在前还是后,0在前，1在后
                 //  &8      是否执行注入 
                 //  &16     是否是队列 
-
             },
 
             uinj: function (a, b) {
-
                 if (a._listener && a._listener[b]) {
                     a._listener[b].ij = null;
                     a._listener[b].ty = a._listener[b].ty ^ 14;
                 }
-
             },
-
             bind: function (a, n, b) {
-
                 // console.log(a&&a.name,b&&b.name);
                 //  try{
                 if (!a || !b.__listeners) return;
-
-
                 var ars = (b.__listeners[n] || (b.__listeners[n] = [])), idx;
-
-
                 if (ars.indexOf(a) == -1) {
                     if (a.depth !== undefined && ars.some(function (m, i, arr) {
                         if (m.depth <= a.depth) return idx = i;
@@ -1404,16 +1332,12 @@
                         ars.unshift(a);
                     }
                 }
-
                 //}catch(e){console.log(a,n,b)}
             },
-
             unbind: function (a, n, b) {
-
                 if (!a._listener || !a._listener[n] || !b.__listeners || !b.__listeners[n]) return;
                 var idx;
                 (idx = b.__listeners[n].indexOf(a)) != -1 && b.__listeners[n].splice(idx, 1);
-
             }
         }
 
@@ -1440,24 +1364,18 @@
     !function () {
 
         miao.jsonp = function (a) {
-
             var callbackName = "miaojsonp" + Q.uid, cakname = a.cakname || 'callback';
             callback, sc = window[callbackName + "Element"] = document.createElement("script");
-
             window[callbackName] = function (data) {
                 window[callbackName + "Element"].remove();
                 delete window[callbackName];
                 a.cak && a.cak(data);
             }
-
             sc.src = url.indexOf('?') != -1 ? url + cakname + '=' + callbackName :
                 url + '?' + cakname + '=' + callbackName;
             document.body.appendChild(sc);
         }
-
-
         _class({
-
             className: 'Ajax',
             extend: 'Base',
             type: 'GET',
@@ -1481,9 +1399,7 @@
                 xhr.onreadystatechange = change ? function () {
                     ts.idle = true;
                     change(xhr);
-
                 } : function () {
-
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         ts.idle = true;
 
@@ -1492,26 +1408,18 @@
                         } else {
                             cak && cak(xhr.response);
                         }
-
                     }
                 }
                 xhr.send(null);
             },
             set: fn.set,
             constructor: function (a) {
-
                 this.xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-
                 this.set(a);
-
             }
         });
-
-
         miao.ajax = function () {
-
             var xhr = {
-
                 xhrPool: [new miao.class.Ajax],
                 repay: function (a) {
                     if (a.idle) this.xhrPool.push(a);
@@ -1532,17 +1440,10 @@
                 });
             }
         }();
-
-
     }();
-
-
     var Tween, pulse;
-
     !function () {
-
         var _tweens = [];
-
         miao.Tween = Tween = _class({
             // className:'Tween',
             constructor: function (object) {
@@ -1566,12 +1467,9 @@
                     , _onUpdateCallback = a.onUpdate || null
                     , _onCompleteCallback = a.onComplete || null
                     , _onStopCallback = a.onStop || null;
-
                 for (var field in _object)
                     _valuesStart[field] = parseFloat(object[field], 10);
-
                 this.start = function (time) {
-
                     Tween.add(this);
                     _isPlaying = true;
                     _onStartCallbackFired = false;
@@ -1670,11 +1568,9 @@
                             _onStartCallback.call(_object);
 
                         }
-
                         _onStartCallbackFired = true;
 
                     }
-
                     var elapsed = (time - _startTime) / _duration;
                     elapsed = elapsed > 1 ? 1 : elapsed;
 
@@ -1930,9 +1826,7 @@
                         return 0.5 * (1 - Math.cos(Math.PI * k));
 
                     }
-
                 },
-
                 Exponential: {
 
                     In: function (k) {
